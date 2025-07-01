@@ -5,15 +5,26 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 )
 
 func main() {
+	clearTerminal()
+
+	helpMessage := "Usage: npm run rr 040\n\n"
 	if len(os.Args) != 2 {
-		fmt.Println("Usage: runrust <file.rs>")
+		fmt.Printf(helpMessage)
 		os.Exit(1)
 	}
 
-	rustFile := os.Args[1]
+	arg := os.Args[1]
+	re := regexp.MustCompile(`^\d{3}$`)
+	if !re.MatchString(arg) {
+		fmt.Printf(helpMessage)
+		os.Exit(1)
+	}
+
+	rustFile := arg
 	base := filepath.Base(rustFile)
 	output := base[:len(base)-len(filepath.Ext(base))]
 
@@ -39,4 +50,8 @@ func main() {
 	if err := os.Remove(output); err != nil {
 		fmt.Println("Warning: could not delete binary:", err)
 	}
+}
+
+func clearTerminal() {
+    fmt.Print("\033[H\033[2J")
 }

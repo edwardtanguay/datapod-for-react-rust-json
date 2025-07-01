@@ -12,6 +12,8 @@ import (
 func main() {
 	clearTerminal()
 
+	pathToExamples := "../examples"
+
 	helpMessage1 := "USAGE: send 3-digit example code\n"
 	helpMessage2 := "EXAMPLE: npm run rr 040\n\n"
 	if len(os.Args) != 2 {
@@ -25,18 +27,18 @@ func main() {
 	re := regexp.MustCompile(`^\d{3}$`)
 	if !re.MatchString(arg) {
 		fmt.Printf("> npm run rr %s\n\n", arg)
-		fmt.Printf(fmt.Sprintf("ERROR: Example code not correct\n"))
+		fmt.Printf(fmt.Sprintf("ERROR: Example code must be 3 digits, got '%s'\n", arg))
 		fmt.Printf(helpMessage1)
 		fmt.Printf(helpMessage2)
 		os.Exit(1)
 	}
 
 	// Find the Rust file
-	pattern := fmt.Sprintf("ex%s*.rs", arg)
+	pattern := fmt.Sprintf(pathToExamples + "/ex%s*.rs", arg)
 	matches, err := filepath.Glob(pattern)
 	if err != nil || len(matches) == 0 {
 		fmt.Printf("> npm run rr %s\n\n", arg)
-		fmt.Printf("ERROR: No file found matching pattern %s\n", pattern)
+		fmt.Printf(fmt.Sprintf("ERROR: Example code not found in any file in examples\n"))
 		fmt.Printf(helpMessage1)
 		fmt.Printf(helpMessage2)
 		os.Exit(1)
@@ -45,7 +47,7 @@ func main() {
 
 	fmt.Printf("> npm run rr %s\n\n", arg)
 
-	base := filepath.Base(rustFile)
+	base := filepath.Base(pathToExamples + "/" + rustFile)
 	output := base[:len(base)-len(filepath.Ext(base))]
 
 	// Compile

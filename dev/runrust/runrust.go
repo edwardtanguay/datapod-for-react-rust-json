@@ -58,18 +58,44 @@ func main() {
 	}
 
 	// Run
-	fmt.Println("====================================")
+	lightGray := "\033[37;2m" // lighter gray (bright white, dimmed)
+	yellow := "\033[33m"
+	reset := "\033[0m"
+	fmt.Println(lightGray + "====================================" + reset)
 	name := base[:len(base)-len(filepath.Ext(base))]
-	fmt.Println(strings.ToUpper(name))
-	fmt.Println("====================================")
+	fmt.Println(lightGray + strings.ToUpper(name) + reset)
+	fmt.Println(lightGray + "====================================" + reset)
+
+	// Run the Rust binary and print its output in yellow
 	cmdRun := exec.Command("./" + output)
-	cmdRun.Stdout = os.Stdout
 	cmdRun.Stderr = os.Stderr
-	if err := cmdRun.Run(); err != nil {
+
+	// Capture stdout
+	stdoutPipe, err := cmdRun.StdoutPipe()
+	if err != nil {
+		fmt.Println("Failed to capture output.")
+		os.Exit(1)
+	}
+	if err := cmdRun.Start(); err != nil {
 		fmt.Println("Execution failed.")
 		os.Exit(1)
 	}
-	fmt.Println("====================================")
+	buf := make([]byte, 1024)
+	for {
+		n, err := stdoutPipe.Read(buf)
+		if n > 0 {
+			fmt.Print(yellow + string(buf[:n]) + reset)
+		}
+		if err != nil {
+			break
+		}
+	}
+	if err := cmdRun.Wait(); err != nil {
+		fmt.Println("Execution failed.")
+		os.Exit(1)
+	}
+	fmt.Println(lightGray + "====================================" + reset)
+	fmt.Println()
 
 	// Delete
 	if err := os.Remove(output); err != nil {

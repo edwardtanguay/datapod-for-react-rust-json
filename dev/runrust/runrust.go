@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 func main() {
@@ -58,7 +59,8 @@ func main() {
 
 	// Run
 	fmt.Println("====================================")
-	fmt.Println(rustFile)
+	name := base[:len(base)-len(filepath.Ext(base))]
+	fmt.Println(strings.ToUpper(name))
 	fmt.Println("====================================")
 	cmdRun := exec.Command("./" + output)
 	cmdRun.Stdout = os.Stdout

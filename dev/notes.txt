@@ -1,3 +1,6 @@
 2025-07-01 18:33:30 cargo install cargo-script, failed
 
-- .. run via npm
+- HOWTO: run an example script
+    - look in /dev/examples
+    - find file you want to run, e.g. ex012-variables.rs
+    - type "npm run rr 012"

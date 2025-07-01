@@ -34,7 +34,7 @@ func main() {
 	}
 
 	// Find the Rust file
-	pattern := fmt.Sprintf(pathToExamples + "/ex%s*.rs", arg)
+	pattern := fmt.Sprintf(pathToExamples+"/ex%s*.rs", arg)
 	matches, err := filepath.Glob(pattern)
 	if err != nil || len(matches) == 0 {
 		fmt.Printf("> npm run rr %s\n\n", arg)
@@ -52,10 +52,12 @@ func main() {
 
 	// Compile
 	cmdCompile := exec.Command("rustc", rustFile)
+	var stderr strings.Builder
 	cmdCompile.Stdout = os.Stdout
-	cmdCompile.Stderr = os.Stderr
+	cmdCompile.Stderr = &stderr
 	if err := cmdCompile.Run(); err != nil {
-		fmt.Println("Compilation failed.")
+		fmt.Printf("Compilation failed: %v\n", err)
+		fmt.Printf("rustc output:\n%s\n", stderr.String())
 		os.Exit(1)
 	}
 

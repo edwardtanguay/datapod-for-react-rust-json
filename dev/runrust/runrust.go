@@ -11,16 +11,22 @@ import (
 func main() {
 	clearTerminal()
 
-	helpMessage := "Usage: npm run rr 040\n\n"
+	helpMessage1 := "USAGE: send 3-digit example code\n"
+	helpMessage2:= "EXAMPLE: npm run rr 040\n\n"
 	if len(os.Args) != 2 {
-		fmt.Printf(helpMessage)
+		fmt.Printf("> npm run rr\n\n")
+		fmt.Printf(helpMessage1)
+		fmt.Printf(helpMessage2)
 		os.Exit(1)
 	}
 
 	arg := os.Args[1]
 	re := regexp.MustCompile(`^\d{3}$`)
 	if !re.MatchString(arg) {
-		fmt.Printf(helpMessage)
+		fmt.Printf("> npm run rr %s\n\n", arg)
+		fmt.Printf(fmt.Sprintf("ERROR: Example code not correct\n"))
+		fmt.Printf(helpMessage1)
+		fmt.Printf(helpMessage2)
 		os.Exit(1)
 	}
 
